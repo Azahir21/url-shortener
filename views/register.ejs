@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <title>Register - go2.web.id</title>
+    <style>
+      :root {
+        --primary: #3498db;
+        --primary-dark: #2980b9;
+        --secondary: #2ecc71;
+        --secondary-dark: #27ae60;
+        --dark: #2c3e50;
+        --light: #ecf0f1;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .auth-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .auth-header {
+        background-color: var(--dark);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+      }
+
+      .auth-header h3 {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .auth-header p {
+        opacity: 0.8;
+        margin-bottom: 0;
+      }
+
+      .auth-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+
+      .auth-logo span {
+        color: var(--secondary);
+      }
+
+      .auth-body {
+        padding: 30px;
+      }
+
+      .form-control {
+        border-radius: 5px;
+        padding: 12px 15px;
+        height: auto;
+        border: 1px solid #ddd;
+        background-color: #f8f9fa;
+      }
+
+      .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        border-color: var(--secondary);
+      }
+
+      .input-group-text {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+      }
+
+      .btn-success {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+        padding: 12px;
+        font-weight: 500;
+        border-radius: 5px;
+      }
+
+      .btn-success:hover {
+        background-color: var(--secondary-dark);
+        border-color: var(--secondary-dark);
+      }
+
+      .auth-footer {
+        text-align: center;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        margin-top: 20px;
+      }
+
+      .animate-fade {
+        animation: fadeIn 0.6s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .alert {
+        border: none;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-5">
+          <div class="auth-card card animate-fade">
+            <div class="auth-header">
+              <div class="auth-logo">
+                <i class="fas fa-link fa-2x mr-2"></i>
+                <h2 class="mb-0">go2<span>.web.id</span></h2>
+              </div>
+              <h3>Create Account</h3>
+              <p>Join our community and start shortening URLs</p>
+            </div>
+
+            <div class="auth-body">
+              <% if (message) { %>
+              <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <%= message %>
+              </div>
+              <% } %>
+
+              <form action="/register" method="POST">
+                <div class="form-group">
+                  <label for="username"><i class="fas fa-user mr-2"></i>Username</label>
+                  <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="email"><i class="fas fa-envelope mr-2"></i>Email</label>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="password"><i class="fas fa-lock mr-2"></i>Password</label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Choose a password" required />
+                    <div class="input-group-append">
+                      <span class="input-group-text" id="togglePassword">
+                        <i class="far fa-eye"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <button type="submit" class="btn btn-success btn-block"><i class="fas fa-user-plus mr-2"></i>Register</button>
+                </div>
+              </form>
+
+              <div class="auth-footer">
+                <p>Already have an account? <a href="/login" class="font-weight-bold">Login</a></p>
+                <a href="/" class="text-muted"><i class="fas fa-home mr-1"></i> Back to Home</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script>
+      // Toggle password visibility
+      document.getElementById("togglePassword").addEventListener("click", function () {
+        const passwordField = document.getElementById("password");
+        const eyeIcon = this.querySelector("i");
+
+        if (passwordField.type === "password") {
+          passwordField.type = "text";
+          eyeIcon.classList.remove("fa-eye");
+          eyeIcon.classList.add("fa-eye-slash");
+        } else {
+          passwordField.type = "password";
+          eyeIcon.classList.remove("fa-eye-slash");
+          eyeIcon.classList.add("fa-eye");
+        }
+      });
+    </script>
+  </body>
+</html>

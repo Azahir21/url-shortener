@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <title>go2.web.id | Dashboard</title>
+    <style>
+      :root {
+        --primary: #3498db;
+        --primary-dark: #2980b9;
+        --secondary: #2ecc71;
+        --secondary-dark: #27ae60;
+        --dark: #2c3e50;
+        --light: #ecf0f1;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --gray: #95a5a6;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .navbar {
+        background-color: var(--dark) !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+        font-weight: 600;
+        font-size: 1.5rem;
+      }
+
+      .navbar-brand span {
+        color: var(--secondary);
+      }
+
+      .container {
+        max-width: 1200px;
+      }
+
+      .main-container {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      h1 {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 1.5rem;
+      }
+
+      .form-control {
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        padding: 0.6rem 1rem;
+      }
+
+      .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        border-color: var(--secondary);
+      }
+
+      .btn-success {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+        font-weight: 500;
+      }
+
+      .btn-success:hover {
+        background-color: var(--secondary-dark);
+        border-color: var(--secondary-dark);
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+      }
+
+      .domain-text {
+        font-weight: 600;
+        color: var(--secondary);
+        background-color: #f8f9fa;
+      }
+
+      #customLinkField {
+        display: none;
+        margin-top: 10px;
+      }
+
+      .table {
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
+      }
+
+      .table th {
+        background-color: #f8f9fa;
+        border-top: none;
+      }
+
+      .badge {
+        padding: 0.5em 0.8em;
+        font-weight: 500;
+      }
+
+      .badge-success {
+        background-color: var(--secondary);
+      }
+
+      .badge-secondary {
+        background-color: var(--gray);
+      }
+
+      .btn-group-sm .btn {
+        border-radius: 4px;
+        margin-right: 3px;
+        font-weight: 500;
+      }
+
+      .modal-content {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+      }
+
+      .modal-title {
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      .animate-fade {
+        animation: fadeIn 0.3s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .url-cell {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .copy-btn {
+        cursor: pointer;
+        color: var(--primary);
+      }
+
+      .copy-btn:hover {
+        color: var(--primary-dark);
+      }
+
+      .footer {
+        background-color: #fff;
+        border-top: 1px solid #eee;
+        padding: 1rem 0;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--gray);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/"> <i class="fas fa-link mr-2"></i>go2<span>.web.id</span> </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <span class="nav-link"><i class="fas fa-user mr-1"></i> <%= user.username %></span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt mr-1"></i> Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="main-container animate-fade">
+        <h1><i class="fas fa-tachometer-alt mr-2"></i> Your Dashboard</h1>
+
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title mb-3"><i class="fas fa-cut mr-2"></i> Shorten a new URL</h5>
+            <form action="/shortUrls" method="POST" class="mb-0">
+              <div class="form-row align-items-center">
+                <div class="col-md-6 mb-2">
+                  <input required placeholder="Enter the URL to shorten" type="url" name="fullUrl" id="fullUrl" class="form-control" />
+                </div>
+                <div class="col-auto mb-2">
+                  <button class="btn btn-success" type="submit"><i class="fas fa-compress-alt mr-1"></i> Shrink</button>
+                </div>
+                <div class="col-auto mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="useCustomLink" name="useCustomLink" value="true" />
+                    <label class="form-check-label" for="useCustomLink"> Use custom link </label>
+                  </div>
+                </div>
+              </div>
+
+              <div id="customLinkField" class="form-row mt-2 animate-fade">
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text domain-text">go2.web.id/</span>
+                    </div>
+                    <input type="text" class="form-control" id="customLink" name="customLink" placeholder="your-custom-link" />
+                  </div>
+                  <small class="form-text text-muted">Only alphanumeric characters and hyphens allowed.</small>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <% if (locals.error) { %>
+        <div class="alert alert-danger animate-fade">
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          <%= error %>
+        </div>
+        <% } %>
+
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title mb-3"><i class="fas fa-link mr-2"></i> Your URLs</h5>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Original URL</th>
+                    <th>Short URL</th>
+                    <th>Clicks</th>
+                    <th>Created</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% shortUrls.forEach(shortUrl => { %>
+                  <tr class="<%= shortUrl.active ? '' : 'table-secondary' %>" data-url-id="<%= shortUrl._id %>">
+                    <td class="url-cell">
+                      <a href="<%= shortUrl.full %>" target="_blank" title="<%= shortUrl.full %>"> <%= shortUrl.full %> </a>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <a href="/<%= shortUrl.short %>" target="_blank" class="<%= shortUrl.active ? '' : 'text-muted' %>" title="<%= shortUrl.active ? 'Click to open' : 'This link is deactivated' %>"> go2.web.id/<%= shortUrl.short %> </a>
+                        <i class="fas fa-copy ml-2 copy-btn" title="Copy to clipboard" data-clipboard="go2.web.id/<%= shortUrl.short %>"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge badge-pill badge-light"> <i class="fas fa-chart-line mr-1"></i> <%= shortUrl.clicks %> </span>
+                    </td>
+                    <td><%= shortUrl.createdAt.toLocaleDateString() %></td>
+                    <td>
+                      <span class="badge badge-pill <%= shortUrl.isCustom ? 'badge-info' : 'badge-light' %>"> <%= shortUrl.isCustom ? 'Custom' : 'Auto' %> </span>
+                    </td>
+                    <td>
+                      <span class="badge badge-pill badge-<%= shortUrl.active ? 'success' : 'secondary' %>"> <%= shortUrl.active ? 'Active' : 'Inactive' %> </span>
+                    </td>
+                    <td>
+                      <div class="btn-group btn-group-sm">
+                        <button class="btn btn-primary edit-url" data-id="<%= shortUrl._id %>" data-full="<%= shortUrl.full %>" data-short="<%= shortUrl.short %>" data-active="<%= shortUrl.active %>">
+                          <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-<%= shortUrl.active ? 'warning' : 'success' %> toggle-active" data-id="<%= shortUrl._id %>" title="<%= shortUrl.active ? 'Deactivate' : 'Activate' %> URL">
+                          <i class="fas fa-<%= shortUrl.active ? 'pause' : 'play' %>"></i>
+                          <%= shortUrl.active ? 'Deactivate' : 'Activate' %>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <% }) %> <% if (shortUrls.length === 0) { %>
+                  <tr>
+                    <td colspan="7" class="text-center py-4 text-muted"><i class="fas fa-info-circle mr-2"></i> You haven't created any shortened URLs yet.</td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit URL Modal -->
+    <div class="modal fade" id="editUrlModal" tabindex="-1" role="dialog" aria-labelledby="editUrlModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editUrlModalLabel"><i class="fas fa-edit mr-2"></i> Edit URL</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="modalError" class="alert alert-danger" style="display: none"></div>
+            <form id="editUrlForm">
+              <input type="hidden" id="editUrlId" name="urlId" />
+              <div class="form-group">
+                <label for="editFullUrl">Long URL</label>
+                <input type="url" class="form-control" id="editFullUrl" required />
+              </div>
+              <div class="form-group">
+                <label for="editShort">Short URL</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text domain-text">go2.web.id/</span>
+                  </div>
+                  <input type="text" class="form-control" id="editShort" required />
+                </div>
+                <small class="form-text text-muted">Only alphanumeric characters and hyphens allowed.</small>
+              </div>
+              <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="editActive" />
+                <label class="form-check-label" for="editActive">Active</label>
+                <small class="form-text text-muted">Uncheck to deactivate this URL</small>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times mr-1"></i> Cancel</button>
+            <button type="button" class="btn btn-primary" id="saveUrlChanges"><i class="fas fa-save mr-1"></i> Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer mt-auto">
+      <div class="container">
+        <p class="mb-0">&copy; <%= new Date().getFullYear() %> go2.web.id | Simple URL Shortener</p>
+      </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <script>
+      // Toggle custom link field visibility
+      document.getElementById("useCustomLink").addEventListener("change", function () {
+        const customLinkField = document.getElementById("customLinkField");
+        if (this.checked) {
+          customLinkField.style.display = "flex";
+          document.getElementById("customLink").focus();
+        } else {
+          customLinkField.style.display = "none";
+        }
+      });
+
+      // Toggle URL active status
+      document.querySelectorAll(".toggle-active").forEach((button) => {
+        button.addEventListener("click", async function () {
+          const urlId = this.dataset.id;
+
+          try {
+            const response = await fetch(`/toggle-active/${urlId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              // Refresh the page to show updated status
+              window.location.reload();
+            } else {
+              alert("Error: " + data.message);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while updating the URL status.");
+          }
+        });
+      });
+
+      // Edit URL functionality
+      document.querySelectorAll(".edit-url").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          // Get URL data from data attributes
+          const urlId = this.getAttribute("data-id");
+          const fullUrl = this.getAttribute("data-full");
+          const shortUrl = this.getAttribute("data-short");
+          const isActive = this.getAttribute("data-active") === "true";
+
+          // Fill the modal form with URL data
+          document.getElementById("editUrlId").value = urlId;
+          document.getElementById("editFullUrl").value = fullUrl;
+          document.getElementById("editShort").value = shortUrl;
+          document.getElementById("editActive").checked = isActive;
+
+          // Clear any previous error messages
+          document.getElementById("modalError").style.display = "none";
+
+          // Show the modal
+          $("#editUrlModal").modal("show");
+        });
+      });
+
+      // Handle form submission
+      document.getElementById("saveUrlChanges").addEventListener("click", async function () {
+        // Get form values
+        const urlId = document.getElementById("editUrlId").value;
+        const fullUrl = document.getElementById("editFullUrl").value;
+        const shortUrl = document.getElementById("editShort").value;
+        const active = document.getElementById("editActive").checked;
+
+        try {
+          const response = await fetch(`/update/${urlId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fullUrl: fullUrl,
+              short: shortUrl,
+              active: active,
+            }),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            // Close the modal and refresh the page
+            $("#editUrlModal").modal("hide");
+            window.location.reload();
+          } else {
+            // Display error message
+            const errorElement = document.getElementById("modalError");
+            errorElement.textContent = result.error || "An error occurred while updating the URL.";
+            errorElement.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          const errorElement = document.getElementById("modalError");
+          errorElement.textContent = "An unexpected error occurred.";
+          errorElement.style.display = "block";
+        }
+      });
+
+      // Clipboard copy functionality
+      document.querySelectorAll(".copy-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const text = this.dataset.clipboard;
+          navigator.clipboard.writeText(text).then(() => {
+            // Visual feedback
+            const originalTitle = this.getAttribute("title");
+            this.setAttribute("title", "Copied!");
+            this.classList.add("text-success");
+
+            setTimeout(() => {
+              this.setAttribute("title", originalTitle);
+              this.classList.remove("text-success");
+            }, 1500);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
