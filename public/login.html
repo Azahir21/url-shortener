@@ -25,6 +25,24 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      .row.justify-content-center {
+        margin-right: -15px;
+        margin-left: -15px;
+      }
+
+      .col-md-5 {
+        padding-right: 15px;
+        padding-left: 15px;
+        transform: translateX(-20px);
       }
 
       .auth-card {
@@ -32,6 +50,12 @@
         border-radius: 10px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         overflow: hidden;
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .auth-card:hover {
+        transform: translateX(5px);
       }
 
       .auth-header {
@@ -85,38 +109,72 @@
         border: 1px solid #ddd;
       }
 
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
       .btn-primary {
         background-color: var(--primary);
         border-color: var(--primary);
         padding: 12px;
         font-weight: 500;
         border-radius: 5px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary i {
+        margin-right: 8px;
       }
 
       .btn-primary:hover {
         background-color: var(--primary-dark);
         border-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
 
       .auth-footer {
         text-align: center;
-        padding-top: 15px;
+        padding-top: 20px;
         border-top: 1px solid #eee;
         margin-top: 20px;
       }
 
+      .auth-footer p {
+        margin-bottom: 10px;
+      }
+
+      .auth-footer a {
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .auth-footer a:hover {
+        color: var(--primary-dark);
+        text-decoration: none;
+      }
+
       .animate-fade {
-        animation: fadeIn 0.6s ease-in;
+        animation: fadeIn 1s ease-out;
       }
 
       @keyframes fadeIn {
-        from {
+        0% {
           opacity: 0;
-          transform: translateY(-10px);
+          transform: translateX(-20px) translateY(-10px);
         }
-        to {
+        100% {
           opacity: 1;
-          transform: translateY(0);
+          transform: translateX(0) translateY(0);
         }
       }
 
