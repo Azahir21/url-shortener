@@ -192,6 +192,16 @@
         font-size: 0.9rem;
         color: var(--gray);
       }
+
+      .custom-link-group {
+        display: none;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .custom-link-group.show {
+        display: block;
+      }
     </style>
   </head>
   <body>
@@ -222,30 +232,28 @@
           <div class="card-body">
             <h5 class="card-title mb-3"><i class="fas fa-cut mr-2"></i> Shorten a new URL</h5>
             <form id="shortenForm" class="mb-0">
-              <div class="form-row align-items-center">
+              <div class="form-row">
                 <div class="col-md-6 mb-2">
                   <input required placeholder="Enter the URL to shorten" type="url" name="fullUrl" id="fullUrl" class="form-control" />
+                  <div class="custom-link-group" id="customLinkGroup">
+                    <div class="input-group mt-2">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text domain-text">go2.web.id/</span>
+                      </div>
+                      <input type="text" class="form-control" id="customLink" placeholder="Enter custom link (e.g., my-link)" />
+                    </div>
+                  </div>
                 </div>
                 <div class="col-auto mb-2">
                   <button class="btn btn-success" type="submit"><i class="fas fa-compress-alt mr-1"></i> Shrink</button>
                 </div>
                 <div class="col-auto mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="useCustomLink" name="useCustomLink" value="true" />
-                    <label class="form-check-label" for="useCustomLink"> Use custom link </label>
-                  </div>
-                </div>
-              </div>
-
-              <div id="customLinkField" class="form-row mt-2 animate-fade">
-                <div class="col-md-6">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text domain-text">go2.web.id/</span>
+                  <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" id="useCustomLink" />
+                      <label class="custom-control-label" for="useCustomLink">Use custom link</label>
                     </div>
-                    <input type="text" class="form-control" id="customLink" name="customLink" placeholder="your-custom-link" />
                   </div>
-                  <small class="form-text text-muted">Only alphanumeric characters and hyphens allowed.</small>
                 </div>
               </div>
             </form>
@@ -473,14 +481,9 @@
       // Add event listeners to dynamic elements
       function addEventListeners() {
         // Toggle custom link field visibility
-        document.getElementById("useCustomLink").addEventListener("change", function () {
-          const customLinkField = document.getElementById("customLinkField");
-          if (this.checked) {
-            customLinkField.style.display = "flex";
-            document.getElementById("customLink").focus();
-          } else {
-            customLinkField.style.display = "none";
-          }
+        document.getElementById('useCustomLink').addEventListener('change', function() {
+          const customLinkGroup = document.getElementById('customLinkGroup');
+          customLinkGroup.classList.toggle('show', this.checked);
         });
 
         // Toggle URL active status
@@ -593,7 +596,7 @@
           if (response.ok) {
             loadUserUrls(); // Refresh the URLs list
             this.reset(); // Reset the form
-            document.getElementById("customLinkField").style.display = "none";
+            document.getElementById("customLinkGroup").classList.remove("show");
             document.getElementById("useCustomLink").checked = false;
           } else {
             if (data.error) {
