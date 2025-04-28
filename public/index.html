@@ -7,6 +7,9 @@
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+      <link rel="icon" type="image/x-icon" href="/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+      <link rel="manifest" href="/site.webmanifest">
       <title>go2.web.id | Fast URL Shortener</title>
       <style>
         :root {
@@ -215,6 +218,9 @@
             margin-bottom: 20px;
           }
         }
+        .force-hide {
+          display: none !important;
+        }
       </style>
     </head>
     <body>
@@ -254,7 +260,7 @@
           <div id="dashboard-button" style="display: none;">
             <a href="/dashboard" class="btn btn-success btn-lg btn-hero animate-fade-up"> <i class="fas fa-arrow-right mr-2"></i> Go to Dashboard </a>
           </div>
-          <div id="auth-buttons" class="d-flex justify-content-center animate-fade-up">
+          <div id="auth-buttons" class="d-flex justify-content-center animate-fade-up" style="display: none !important;">
             <div class="col-md-6 text-center">
               <div class="card bg-white border-0 shadow">
                 <div class="card-body py-4">
@@ -348,42 +354,116 @@
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
         // Check if user is logged in
-        async function checkAuthStatus() {
-          try {
-            const response = await fetch('/api/auth/status');
-            const data = await response.json();
-            
-            if (data.authenticated) {
-              // Show authenticated user UI
-              document.getElementById('user-nav-item').style.display = 'block';
-              document.getElementById('dashboard-nav-item').style.display = 'block';
-              document.getElementById('logout-nav-item').style.display = 'block';
-              document.getElementById('login-nav-item').style.display = 'none';
-              document.getElementById('register-nav-item').style.display = 'none';
-              document.getElementById('dashboard-button').style.display = 'block';
-              document.getElementById('auth-buttons').style.display = 'none';
-              document.getElementById('dashboard-cta').style.display = 'block';
-              document.getElementById('register-cta').style.display = 'none';
-              document.getElementById('username').textContent = data.username;
-            } else {
-              // Show guest UI
-              document.getElementById('user-nav-item').style.display = 'none';
-              document.getElementById('dashboard-nav-item').style.display = 'none';
-              document.getElementById('logout-nav-item').style.display = 'none';
-              document.getElementById('login-nav-item').style.display = 'block';
-              document.getElementById('register-nav-item').style.display = 'block';
-              document.getElementById('dashboard-button').style.display = 'none';
-              document.getElementById('auth-buttons').style.display = 'block';
-              document.getElementById('dashboard-cta').style.display = 'none';
-              document.getElementById('register-cta').style.display = 'block';
+        // Add this at the beginning of the script section
+        console.log('Script initialized');
+
+        // Make sure auth-buttons starts hidden by default
+        document.addEventListener('DOMContentLoaded', function() {
+          console.log('DOM loaded, setting initial states');
+          
+          // Force initial state - hide auth elements initially
+          const authElements = [
+            'auth-buttons',
+            'dashboard-button',
+            'dashboard-cta',
+            'register-cta',
+            'user-nav-item',
+            'dashboard-nav-item',
+            'logout-nav-item'
+          ];
+          
+          authElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+              element.style.display = 'none';
+              console.log(`Initially hiding ${id}`);
             }
+          });
+          
+          // Only after setting initial states, check auth
+          console.log('Checking auth status');
+          checkAuthStatus();
+        });
+
+        // Completely rewritten auth status function
+        async function checkAuthStatus() {
+          console.log('checkAuthStatus started');
+          
+          try {
+            const response = await fetch('/api/auth/status', {
+              credentials: 'include',
+              headers: {
+                'Accept': 'application/json'
+              }
+            });
+            
+            const data = await response.json();
+            console.log('Auth response received:', data);
+            
+            // Clear previous state
+            console.log('Updating UI based on auth status');
+            
+            // In your checkAuthStatus function, replace the hiding code with:
+            if (data.authenticated) {
+              console.log('User IS authenticated');
+              
+              // Hide login elements
+              ['auth-buttons', 'login-nav-item', 'register-nav-item', 'register-cta'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                  element.classList.add('force-hide');
+                  console.log(`Hiding ${id}`);
+                }
+              });
+              
+              // Show dashboard elements
+              ['dashboard-button', 'dashboard-cta', 'user-nav-item', 'dashboard-nav-item', 'logout-nav-item'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                  element.classList.remove('force-hide');
+                  element.style.display = 'block';
+                  console.log(`Showing ${id}`);
+                }
+              });
+            } else {
+              console.log('User is NOT authenticated');
+              
+              // Show login elements
+              ['auth-buttons', 'login-nav-item', 'register-nav-item', 'register-cta'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                  element.style.display = 'block';
+                  console.log(`Showing ${id}`);
+                }
+              });
+              
+              // Hide dashboard elements
+              ['dashboard-button', 'dashboard-cta', 'user-nav-item', 'dashboard-nav-item', 'logout-nav-item'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                  element.style.display = 'none';
+                  console.log(`Hiding ${id}`);
+                }
+              });
+            }
+            
+            console.log('UI update complete');
+            
           } catch (error) {
             console.error('Error checking auth status:', error);
+            
+            // Fallback to non-authenticated state
+            ['auth-buttons', 'login-nav-item', 'register-nav-item', 'register-cta'].forEach(id => {
+              const element = document.getElementById(id);
+              if (element) element.style.display = 'block';
+            });
+            
+            ['dashboard-button', 'dashboard-cta', 'user-nav-item', 'dashboard-nav-item', 'logout-nav-item'].forEach(id => {
+              const element = document.getElementById(id);
+              if (element) element.style.display = 'none';
+            });
           }
         }
-
-        // Check auth status when page loads
-        document.addEventListener('DOMContentLoaded', checkAuthStatus);
       </script>
     </body>
   </html> 
