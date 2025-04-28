@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="icon" type="image/png" href="/favicon.svg">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <title>go2.web.id | Dashboard</title>
     <style>
       :root {
@@ -206,6 +206,35 @@
       .custom-link-group.show {
         display: block;
       }
+
+      /* QR Code Modal Styles */
+      .qr-code-modal .modal-dialog {
+        max-width: 400px;
+      }
+
+      .qr-code-container {
+        text-align: center;
+        padding: 20px;
+      }
+
+      .qr-code-image {
+        max-width: 200px;
+        margin: 0 auto 20px;
+      }
+
+      .download-qr-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .download-qr-btn:hover {
+        background-color: var(--primary-dark);
+      }
     </style>
   </head>
   <body>
@@ -264,7 +293,7 @@
           </div>
         </div>
 
-        <div id="error-message" class="alert alert-danger animate-fade" style="display: none;">
+        <div id="error-message" class="alert alert-danger animate-fade" style="display: none">
           <i class="fas fa-exclamation-circle mr-2"></i>
           <span id="error-text"></span>
         </div>
@@ -347,62 +376,82 @@
       </div>
     </footer>
 
+    <!-- QR Code Modal -->
+    <div class="modal fade qr-code-modal" id="qrCodeModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">QR Code</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="qr-code-container">
+              <img id="qrCodeImage" class="qr-code-image" src="" alt="QR Code" />
+              <button class="download-qr-btn" onclick="downloadQRCode()"><i class="fas fa-download mr-2"></i>Download QR Code</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
     <script>
       // Set current year in footer
-      document.getElementById('current-year').textContent = new Date().getFullYear();
+      document.getElementById("current-year").textContent = new Date().getFullYear();
 
       // Check if user is logged in
       async function checkAuthStatus() {
         try {
-          const response = await fetch('/api/auth/status', {
-            credentials: 'include',
+          const response = await fetch("/api/auth/status", {
+            credentials: "include",
             headers: {
-              'Accept': 'application/json'
-            }
+              Accept: "application/json",
+            },
           });
-          
+
           const data = await response.json();
-          
+
           if (data.authenticated) {
-            document.getElementById('username').textContent = data.username;
+            document.getElementById("username").textContent = data.username;
             await loadUserUrls();
           } else {
-            console.log('Not authenticated, redirecting to login');
-            window.location.href = '/login';
+            console.log("Not authenticated, redirecting to login");
+            window.location.href = "/login";
           }
         } catch (error) {
-          console.error('Error checking auth status:', error);
-          window.location.href = '/login';
+          console.error("Error checking auth status:", error);
+          window.location.href = "/login";
         }
       }
 
       // Load user's URLs
       async function loadUserUrls() {
         try {
-          const response = await fetch('/api/shortUrls', {
-            credentials: 'include',
+          const response = await fetch("/api/shortUrls", {
+            credentials: "include",
             headers: {
-              'Accept': 'application/json'
-            }
+              Accept: "application/json",
+            },
           });
-          
+
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          
+
           const data = await response.json();
-          
+
           if (data.error) {
             showError(data.error);
             return;
           }
 
-          const tbody = document.getElementById('urls-table-body');
-          tbody.innerHTML = '';
+          const tbody = document.getElementById("urls-table-body");
+          tbody.innerHTML = "";
 
           if (!data.shortUrls || data.shortUrls.length === 0) {
             tbody.innerHTML = `
@@ -415,19 +464,19 @@
             return;
           }
 
-          data.shortUrls.forEach(url => {
-            const row = document.createElement('tr');
-            row.className = url.active ? '' : 'table-secondary';
+          data.shortUrls.forEach((url) => {
+            const row = document.createElement("tr");
+            row.className = url.active ? "" : "table-secondary";
             row.dataset.urlId = url._id;
-            
+
             row.innerHTML = `
               <td class="url-cell">
                 <a href="${url.full}" target="_blank" title="${url.full}">${url.full}</a>
               </td>
               <td>
                 <div class="d-flex align-items-center">
-                  <a href="/${url.short}" target="_blank" class="${url.active ? '' : 'text-muted'}" 
-                     title="${url.active ? 'Click to open' : 'This link is deactivated'}">
+                  <a href="/${url.short}" target="_blank" class="${url.active ? "" : "text-muted"}" 
+                     title="${url.active ? "Click to open" : "This link is deactivated"}">
                     go2.web.id/${url.short}
                   </a>
                   <i class="fas fa-copy ml-2 copy-btn" title="Copy to clipboard" 
@@ -441,43 +490,45 @@
               </td>
               <td>${new Date(url.createdAt).toLocaleDateString()}</td>
               <td>
-                <span class="badge badge-pill ${url.isCustom ? 'badge-info' : 'badge-light'}">
-                  ${url.isCustom ? 'Custom' : 'Auto'}
+                <span class="badge badge-pill ${url.isCustom ? "badge-info" : "badge-light"}">
+                  ${url.isCustom ? "Custom" : "Auto"}
                 </span>
               </td>
               <td>
-                <span class="badge badge-pill badge-${url.active ? 'success' : 'secondary'}">
-                  ${url.active ? 'Active' : 'Inactive'}
+                <span class="badge badge-pill badge-${url.active ? "success" : "secondary"}">
+                  ${url.active ? "Active" : "Inactive"}
                 </span>
               </td>
               <td>
                 <div class="btn-group btn-group-sm">
-                  <button class="btn btn-primary edit-url" data-id="${url._id}" 
+                  <button class="btn btn-info" onclick="generateQRCode('${url.short}')">
+                    <i class="fas fa-qrcode"></i>
+                  </button>
+                  <button class="btn btn-warning edit-url" data-id="${url._id}" 
                           data-full="${url.full}" data-short="${url.short}" 
                           data-active="${url.active}">
-                    <i class="fas fa-edit"></i> Edit
+                    <i class="fas fa-edit"></i>
                   </button>
-                  <button class="btn btn-${url.active ? 'warning' : 'success'} toggle-active" 
+                  <button class="btn btn-${url.active ? "warning" : "success"} toggle-active" 
                           data-id="${url._id}" 
-                          title="${url.active ? 'Deactivate' : 'Activate'} URL">
-                    <i class="fas fa-${url.active ? 'pause' : 'play'}"></i>
-                    ${url.active ? 'Deactivate' : 'Activate'}
+                          title="${url.active ? "Deactivate" : "Activate"} URL">
+                    <i class="fas fa-${url.active ? "pause" : "play"}"></i>
                   </button>
                 </div>
               </td>
             `;
-            
+
             tbody.appendChild(row);
           });
 
           // Add event listeners to new elements
           addEventListeners();
         } catch (error) {
-          console.error('Error loading URLs:', error);
-          if (error.message.includes('401')) {
-            window.location.href = '/login';
+          console.error("Error loading URLs:", error);
+          if (error.message.includes("401")) {
+            window.location.href = "/login";
           } else {
-            showError('Failed to load your URLs. Please try again.');
+            showError("Failed to load your URLs. Please try again.");
           }
         }
       }
@@ -485,9 +536,9 @@
       // Add event listeners to dynamic elements
       function addEventListeners() {
         // Toggle custom link field visibility
-        document.getElementById('useCustomLink').addEventListener('change', function() {
-          const customLinkGroup = document.getElementById('customLinkGroup');
-          customLinkGroup.classList.toggle('show', this.checked);
+        document.getElementById("useCustomLink").addEventListener("change", function () {
+          const customLinkGroup = document.getElementById("customLinkGroup");
+          customLinkGroup.classList.toggle("show", this.checked);
         });
 
         // Toggle URL active status
@@ -554,48 +605,48 @@
       }
 
       // Handle form submission
-      document.getElementById("shortenForm").addEventListener("submit", async function(e) {
+      document.getElementById("shortenForm").addEventListener("submit", async function (e) {
         e.preventDefault();
-        
-        const fullUrl = document.getElementById('fullUrl').value.trim();
-        const useCustomLink = document.getElementById('useCustomLink').checked;
-        const customLink = useCustomLink ? document.getElementById('customLink').value.trim() : null;
+
+        const fullUrl = document.getElementById("fullUrl").value.trim();
+        const useCustomLink = document.getElementById("useCustomLink").checked;
+        const customLink = useCustomLink ? document.getElementById("customLink").value.trim() : null;
 
         // Debug log
-        console.log('Submitting form with data:', { fullUrl, useCustomLink, customLink });
+        console.log("Submitting form with data:", { fullUrl, useCustomLink, customLink });
 
         if (!fullUrl) {
-          showError('Please enter a URL to shorten');
+          showError("Please enter a URL to shorten");
           return;
         }
 
         // If custom link is checked but no custom link provided
         if (useCustomLink && !customLink) {
-          showError('Please enter a custom link');
+          showError("Please enter a custom link");
           return;
         }
 
         const formData = {
           fullUrl,
           useCustomLink,
-          customLink: useCustomLink ? customLink : null
+          customLink: useCustomLink ? customLink : null,
         };
 
         try {
-          console.log('Sending request to /shortUrls with data:', formData);
-          const response = await fetch('/shortUrls', {
-            method: 'POST',
+          console.log("Sending request to /shortUrls with data:", formData);
+          const response = await fetch("/shortUrls", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
+              "Content-Type": "application/json",
+              Accept: "application/json",
             },
-            credentials: 'include',
-            body: JSON.stringify(formData)
+            credentials: "include",
+            body: JSON.stringify(formData),
           });
 
-          console.log('Response status:', response.status);
+          console.log("Response status:", response.status);
           const data = await response.json();
-          console.log('Response data:', data);
+          console.log("Response data:", data);
 
           if (response.ok) {
             loadUserUrls(); // Refresh the URLs list
@@ -608,8 +659,8 @@
             }
           }
         } catch (error) {
-          console.error('Error:', error);
-          showError('An error occurred while shortening the URL');
+          console.error("Error:", error);
+          showError("An error occurred while shortening the URL");
         }
       });
 
@@ -653,14 +704,72 @@
 
       // Show error message
       function showError(message) {
-        const errorDiv = document.getElementById('error-message');
-        const errorText = document.getElementById('error-text');
-        errorDiv.style.display = 'block';
+        const errorDiv = document.getElementById("error-message");
+        const errorText = document.getElementById("error-text");
+        errorDiv.style.display = "block";
         errorText.textContent = message;
       }
 
       // Check auth status when page loads
-      document.addEventListener('DOMContentLoaded', checkAuthStatus);
+      document.addEventListener("DOMContentLoaded", checkAuthStatus);
+
+      // Add QR code functionality
+      function generateQRCode(shortUrl) {
+        fetch(`/api/qrcode/${shortUrl}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.qrCode) {
+              const qrCodeImage = document.getElementById("qrCodeImage");
+              qrCodeImage.src = data.qrCode;
+              $("#qrCodeModal").modal("show");
+            } else {
+              alert("Error generating QR code");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error generating QR code");
+          });
+      }
+
+      function downloadQRCode() {
+        const qrCodeImage = document.getElementById("qrCodeImage");
+        const link = document.createElement("a");
+        link.href = qrCodeImage.src;
+        link.download = "qr-code.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      // Modify the createUrlRow function to add QR code button
+      function createUrlRow(url) {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="url-cell">${url.full}</td>
+          <td>
+            <a href="/${url.short}" target="_blank">go2.web.id/${url.short}</a>
+          </td>
+          <td>${url.clicks}</td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-primary" onclick="copyToClipboard('${url.short}')">
+                <i class="fas fa-copy"></i>
+              </button>
+              <button class="btn btn-info" onclick="generateQRCode('${url.short}')">
+                <i class="fas fa-qrcode"></i>
+              </button>
+              <button class="btn btn-warning" onclick="editUrl('${url._id}')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-danger" onclick="deleteUrl('${url._id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        return row;
+      }
     </script>
   </body>
-</html> 
+</html>

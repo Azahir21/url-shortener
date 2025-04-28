@@ -6,6 +6,7 @@ const User = require("./model/user");
 const { isAuthenticated, generateToken } = require("./middleware/auth");
 const jwt = require("jsonwebtoken");
 const config = require("./config/config");
+const QRCode = require("qrcode");
 const app = express();
 
 // Load environment variables
@@ -19,23 +20,23 @@ mongoose
 
 // Setup Express middleware
 app.set("view engine", "ejs");
-app.use(express.json({ limit: '10mb' })); // Parse JSON bodies first
-app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Parse URL-encoded bodies
+app.use(express.json({ limit: "10mb" })); // Parse JSON bodies first
+app.use(express.urlencoded({ extended: true, limit: "10mb" })); // Parse URL-encoded bodies
 app.use(cookieParser());
 app.use(express.static("public")); // Serve static files from public directory
 
 // Add CORS middleware
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
   // Handle preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
-  
+
   next();
 });
 
@@ -43,7 +44,7 @@ app.use((req, res, next) => {
 app.get("/api/auth/status", async (req, res) => {
   try {
     const token = req.cookies.token;
-    
+
     if (!token) {
       return res.json({ authenticated: false });
     }
@@ -57,10 +58,10 @@ app.get("/api/auth/status", async (req, res) => {
 
     res.json({
       authenticated: true,
-      username: user.username
+      username: user.username,
     });
   } catch (error) {
-    console.error('Auth status error:', error);
+    console.error("Auth status error:", error);
     res.json({ authenticated: false });
   }
 });
@@ -68,13 +69,12 @@ app.get("/api/auth/status", async (req, res) => {
 // Get user's short URLs
 app.get("/api/shortUrls", isAuthenticated, async (req, res) => {
   try {
-    const shortUrls = await ShortUrl.find({ user: req.user._id })
-      .sort({ createdAt: -1 });
-    
+    const shortUrls = await ShortUrl.find({ user: req.user._id }).sort({ createdAt: -1 });
+
     res.json({ shortUrls });
   } catch (error) {
-    console.error('Error fetching URLs:', error);
-    res.status(500).json({ error: 'Failed to fetch URLs' });
+    console.error("Error fetching URLs:", error);
+    res.status(500).json({ error: "Failed to fetch URLs" });
   }
 });
 
@@ -174,8 +174,7 @@ app.get("/dashboard", isAuthenticated, async (req, res) => {
 
 app.post("/shortUrls", isAuthenticated, async (req, res) => {
   try {
-
-    if (!req.body || typeof req.body !== 'object') {
+    if (!req.body || typeof req.body !== "object") {
       return res.status(400).json({ error: "Invalid request body" });
     }
 
@@ -206,18 +205,43 @@ app.post("/shortUrls", isAuthenticated, async (req, res) => {
 
       // Define protected routes that cannot be used as custom short URLs
       const protectedPaths = [
-        "login", "logout", "register", "dashboard", "admin", "api", "shortUrls",
-        "edit", "update", "toggle-active", "user", "profile", "account", "settings",
-        "password", "reset", "verify", "confirm", "auth", "oauth", "static", "assets",
-        "css", "js", "img", "images", "favicon", "robots.txt", "sitemap", "404", "500", "error"
+        "login",
+        "logout",
+        "register",
+        "dashboard",
+        "admin",
+        "api",
+        "shortUrls",
+        "edit",
+        "update",
+        "toggle-active",
+        "user",
+        "profile",
+        "account",
+        "settings",
+        "password",
+        "reset",
+        "verify",
+        "confirm",
+        "auth",
+        "oauth",
+        "static",
+        "assets",
+        "css",
+        "js",
+        "img",
+        "images",
+        "favicon",
+        "robots.txt",
+        "sitemap",
+        "404",
+        "500",
+        "error",
       ];
 
       // Check if the custom link matches any protected route
       const lowerCustomLink = customLink.toLowerCase();
-      if (protectedPaths.includes(lowerCustomLink) || 
-          protectedPaths.some(path => lowerCustomLink.startsWith(path + "/")) || 
-          lowerCustomLink.startsWith("api/") || 
-          lowerCustomLink.startsWith("admin/")) {
+      if (protectedPaths.includes(lowerCustomLink) || protectedPaths.some((path) => lowerCustomLink.startsWith(path + "/")) || lowerCustomLink.startsWith("api/") || lowerCustomLink.startsWith("admin/")) {
         return res.status(400).json({ error: "This custom link is already taken. Please choose another one." });
       }
 
@@ -232,20 +256,20 @@ app.post("/shortUrls", isAuthenticated, async (req, res) => {
         full: fullUrl,
         short: customLink,
         user: req.user._id,
-        isCustom: true
+        isCustom: true,
       });
     } else {
       // Create with auto-generated short link
       shortUrl = await ShortUrl.create({
         full: fullUrl,
         user: req.user._id,
-        isCustom: false
+        isCustom: false,
       });
     }
 
     res.status(201).json({ success: true, shortUrl });
   } catch (error) {
-    console.error('Error in /shortUrls route:', error);
+    console.error("Error in /shortUrls route:", error);
     res.status(500).json({ error: "Error creating shortened URL" });
   }
 });
@@ -406,6 +430,25 @@ app.get("/:shortUrl", async (req, res) => {
   } catch (error) {
     console.error("Redirection error:", error);
     res.status(500).send("Server error");
+  }
+});
+
+// QR Code generation endpoint
+app.get("/api/qrcode/:shortUrl", isAuthenticated, async (req, res) => {
+  try {
+    const shortUrl = await ShortUrl.findOne({ short: req.params.shortUrl, user: req.user._id });
+
+    if (!shortUrl) {
+      return res.status(404).json({ error: "URL not found" });
+    }
+
+    const fullUrl = `${req.protocol}://${req.get("host")}/${shortUrl.short}`;
+    const qrCode = await QRCode.toDataURL(fullUrl);
+
+    res.json({ qrCode });
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    res.status(500).json({ error: "Error generating QR code" });
   }
 });
 
