@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <title>go2.web.id | Fast URL Shortener</title>
+    <style>
+      :root {
+        --primary: #3498db;
+        --primary-dark: #2980b9;
+        --secondary: #2ecc71;
+        --secondary-dark: #27ae60;
+        --dark: #2c3e50;
+        --light: #ecf0f1;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --gray: #95a5a6;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .navbar {
+        background-color: var(--dark) !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+        font-weight: 600;
+        font-size: 1.5rem;
+      }
+
+      .navbar-brand span {
+        color: var(--secondary);
+      }
+
+      .hero-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: -10%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: rgba(46, 204, 113, 0.1);
+        z-index: 1;
+      }
+
+      .hero-section::after {
+        content: "";
+        position: absolute;
+        bottom: -10%;
+        left: -10%;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(52, 152, 219, 0.1);
+        z-index: 1;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .display-4 {
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      .display-4 span {
+        color: var(--secondary);
+      }
+
+      .lead {
+        font-size: 1.25rem;
+        font-weight: 300;
+        margin-bottom: 30px;
+      }
+
+      .btn-hero {
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .btn-hero:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .feature-box {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        transition: transform 0.3s ease;
+      }
+
+      .feature-box:hover {
+        transform: translateY(-5px);
+      }
+
+      .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        background-color: rgba(46, 204, 113, 0.1);
+        color: var(--secondary);
+        border-radius: 50%;
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+      }
+
+      .feature-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: var(--dark);
+      }
+
+      .cta-section {
+        background-color: #f8f9fa;
+        padding: 80px 0;
+        position: relative;
+      }
+
+      .cta-content {
+        background-color: white;
+        padding: 50px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      .footer {
+        background-color: var(--dark);
+        color: white;
+        padding: 40px 0;
+      }
+
+      .footer-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        margin-right: 20px;
+      }
+
+      .footer-link:hover {
+        color: white;
+        text-decoration: none;
+      }
+
+      .social-icon {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .social-icon:hover {
+        background-color: var(--secondary);
+        transform: translateY(-3px);
+      }
+
+      .animate-fade-up {
+        animation: fadeUp 0.6s ease-out;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero-section {
+          padding: 60px 0;
+        }
+        .display-4 {
+          font-size: 2.5rem;
+        }
+        .feature-box {
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/"> <i class="fas fa-link mr-2"></i>go2<span>.web.id</span> </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item" id="user-nav-item" style="display: none;">
+              <span class="nav-link"><i class="fas fa-user mr-1"></i> <span id="username"></span></span>
+            </li>
+            <li class="nav-item" id="dashboard-nav-item" style="display: none;">
+              <a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt mr-1"></i> Dashboard</a>
+            </li>
+            <li class="nav-item" id="logout-nav-item" style="display: none;">
+              <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt mr-1"></i> Logout</a>
+            </li>
+            <li class="nav-item" id="login-nav-item">
+              <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt mr-1"></i> Login</a>
+            </li>
+            <li class="nav-item" id="register-nav-item">
+              <a class="nav-link" href="/register"><i class="fas fa-user-plus mr-1"></i> Register</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero-section">
+      <div class="container text-center hero-content">
+        <h1 class="display-4 animate-fade-up">Simplify Your Links with <span>go2.web.id</span></h1>
+        <p class="lead animate-fade-up">Create memorable, easy-to-share links with our powerful URL shortening service</p>
+
+        <div id="dashboard-button" style="display: none;">
+          <a href="/dashboard" class="btn btn-success btn-lg btn-hero animate-fade-up"> <i class="fas fa-arrow-right mr-2"></i> Go to Dashboard </a>
+        </div>
+        <div id="auth-buttons" class="row justify-content-center animate-fade-up">
+          <div class="col-md-6">
+            <div class="card bg-white border-0 shadow">
+              <div class="card-body py-4">
+                <h5 class="card-title mb-3 text-dark">Get Started Now</h5>
+                <p class="card-text mb-4 text-muted">Join thousands of users who trust our service</p>
+                <a href="/login" class="btn btn-primary mr-2"> <i class="fas fa-sign-in-alt mr-1"></i> Login </a>
+                <a href="/register" class="btn btn-outline-primary"> <i class="fas fa-user-plus mr-1"></i> Register </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container py-5">
+      <div class="text-center mb-5">
+        <h2 class="mb-3">Why Choose go2.web.id?</h2>
+        <p class="text-muted">Our service offers everything you need for effective link management</p>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-cut"></i>
+            </div>
+            <h3 class="feature-title">Quick Shortening</h3>
+            <p>Transform long, unwieldy links into short, memorable URLs that are easy to share on social media, emails, and messages.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">Track Performance</h3>
+            <p>Monitor the performance of your shortened links with our built-in click tracking and analytics dashboard.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-edit"></i>
+            </div>
+            <h3 class="feature-title">Custom Links</h3>
+            <p>Create personalized short links that reflect your brand or content for better recognition and recall.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-content text-center">
+          <h2 class="mb-3">Ready to simplify your links?</h2>
+          <p class="lead text-muted mb-4">Join thousands of users who trust go2.web.id for their URL shortening needs</p>
+          <div id="dashboard-cta" style="display: none;">
+            <a href="/dashboard" class="btn btn-success btn-lg"> <i class="fas fa-tachometer-alt mr-2"></i> Go to Dashboard </a>
+          </div>
+          <div id="register-cta">
+            <a href="/register" class="btn btn-success btn-lg"> <i class="fas fa-rocket mr-2"></i> Get Started Now </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6 mb-3 mb-md-0">
+            <h5 class="mb-2"><i class="fas fa-link mr-2"></i>go2<span>.web.id</span></h5>
+            <p class="mb-0">&copy; <span id="current-year"></span> go2.web.id | All rights reserved.</p>
+          </div>
+          <div class="col-md-6 text-md-right">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <div class="mt-2">
+              <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script>
+      // Set current year in footer
+      document.getElementById('current-year').textContent = new Date().getFullYear();
+
+      // Check if user is logged in
+      async function checkAuthStatus() {
+        try {
+          const response = await fetch('/api/auth/status');
+          const data = await response.json();
+          
+          if (data.authenticated) {
+            // Show authenticated user UI
+            document.getElementById('user-nav-item').style.display = 'block';
+            document.getElementById('dashboard-nav-item').style.display = 'block';
+            document.getElementById('logout-nav-item').style.display = 'block';
+            document.getElementById('login-nav-item').style.display = 'none';
+            document.getElementById('register-nav-item').style.display = 'none';
+            document.getElementById('dashboard-button').style.display = 'block';
+            document.getElementById('auth-buttons').style.display = 'none';
+            document.getElementById('dashboard-cta').style.display = 'block';
+            document.getElementById('register-cta').style.display = 'none';
+            document.getElementById('username').textContent = data.username;
+          } else {
+            // Show guest UI
+            document.getElementById('user-nav-item').style.display = 'none';
+            document.getElementById('dashboard-nav-item').style.display = 'none';
+            document.getElementById('logout-nav-item').style.display = 'none';
+            document.getElementById('login-nav-item').style.display = 'block';
+            document.getElementById('register-nav-item').style.display = 'block';
+            document.getElementById('dashboard-button').style.display = 'none';
+            document.getElementById('auth-buttons').style.display = 'block';
+            document.getElementById('dashboard-cta').style.display = 'none';
+            document.getElementById('register-cta').style.display = 'block';
+          }
+        } catch (error) {
+          console.error('Error checking auth status:', error);
+        }
+      }
+
+      // Check auth status when page loads
+      document.addEventListener('DOMContentLoaded', checkAuthStatus);
+    </script>
+  </body>
+</html> 
