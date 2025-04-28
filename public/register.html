@@ -124,6 +124,53 @@
         border: none;
         border-radius: 5px;
       }
+
+      .password-requirements {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: #666;
+      }
+
+      .requirement {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+
+      .requirement i {
+        margin-right: 8px;
+        font-size: 12px;
+      }
+
+      .requirement.valid {
+        color: var(--secondary);
+      }
+
+      .requirement.invalid {
+        color: #e74c3c;
+      }
+
+      .password-strength {
+        height: 5px;
+        margin-top: 10px;
+        border-radius: 3px;
+        transition: all 0.3s ease;
+      }
+
+      .strength-weak {
+        background-color: #e74c3c;
+        width: 33.33%;
+      }
+
+      .strength-medium {
+        background-color: #f39c12;
+        width: 66.66%;
+      }
+
+      .strength-strong {
+        background-color: var(--secondary);
+        width: 100%;
+      }
     </style>
   </head>
   <body>
@@ -167,6 +214,29 @@
                       </span>
                     </div>
                   </div>
+                  <div class="password-strength"></div>
+                  <div class="password-requirements">
+                    <div class="requirement" data-requirement="length">
+                      <i class="fas fa-times-circle"></i>
+                      At least 8 characters long
+                    </div>
+                    <div class="requirement" data-requirement="uppercase">
+                      <i class="fas fa-times-circle"></i>
+                      Contains uppercase letter
+                    </div>
+                    <div class="requirement" data-requirement="lowercase">
+                      <i class="fas fa-times-circle"></i>
+                      Contains lowercase letter
+                    </div>
+                    <div class="requirement" data-requirement="number">
+                      <i class="fas fa-times-circle"></i>
+                      Contains number
+                    </div>
+                    <div class="requirement" data-requirement="special">
+                      <i class="fas fa-times-circle"></i>
+                      Contains special character
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group">
@@ -186,19 +256,54 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
     <script>
-      // Toggle password visibility
-      document.getElementById("togglePassword").addEventListener("click", function () {
-        const passwordField = document.getElementById("password");
-        const eyeIcon = this.querySelector("i");
+      // Password validation
+      const password = document.getElementById('password');
+      const requirements = document.querySelectorAll('.requirement');
+      const passwordStrength = document.querySelector('.password-strength');
 
-        if (passwordField.type === "password") {
-          passwordField.type = "text";
-          eyeIcon.classList.remove("fa-eye");
-          eyeIcon.classList.add("fa-eye-slash");
-        } else {
-          passwordField.type = "password";
-          eyeIcon.classList.remove("fa-eye-slash");
-          eyeIcon.classList.add("fa-eye");
+      const validatePassword = (password) => {
+        const requirements = {
+          length: password.length >= 8,
+          uppercase: /[A-Z]/.test(password),
+          lowercase: /[a-z]/.test(password),
+          number: /[0-9]/.test(password),
+          special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
+
+        let strength = 0;
+        Object.values(requirements).forEach(requirement => {
+          if (requirement) strength++;
+        });
+
+        return { requirements, strength };
+      };
+
+      password.addEventListener('input', function() {
+        const { requirements: validRequirements, strength } = validatePassword(this.value);
+
+        // Update requirements
+        document.querySelectorAll('.requirement').forEach(requirement => {
+          const type = requirement.dataset.requirement;
+          const isValid = validRequirements[type];
+          const icon = requirement.querySelector('i');
+
+          requirement.classList.toggle('valid', isValid);
+          requirement.classList.toggle('invalid', !isValid);
+          
+          icon.classList.remove('fa-times-circle', 'fa-check-circle');
+          icon.classList.add(isValid ? 'fa-check-circle' : 'fa-times-circle');
+        });
+
+        // Update strength indicator
+        passwordStrength.className = 'password-strength';
+        if (strength > 0) {
+          if (strength <= 2) {
+            passwordStrength.classList.add('strength-weak');
+          } else if (strength <= 4) {
+            passwordStrength.classList.add('strength-medium');
+          } else {
+            passwordStrength.classList.add('strength-strong');
+          }
         }
       });
 
@@ -216,13 +321,25 @@
         }
       });
 
-      // Handle form submission
+      // Form submission validation
       document.getElementById('register-form').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const username = document.getElementById('username').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+
+        // Validate password
+        const { requirements, strength } = validatePassword(password);
+        const isValid = Object.values(requirements).every(req => req);
+
+        if (!isValid) {
+          const errorDiv = document.getElementById('error-message');
+          const errorText = document.getElementById('error-text');
+          errorDiv.style.display = 'block';
+          errorText.textContent = 'Please meet all password requirements';
+          return;
+        }
         
         try {
           const response = await fetch('/register', {
@@ -236,7 +353,6 @@
           const data = await response.json();
           
           if (data.success) {
-            // Redirect to dashboard on success
             window.location.href = data.redirect;
           } else if (data.error) {
             const errorDiv = document.getElementById('error-message');
@@ -250,6 +366,22 @@
           const errorText = document.getElementById('error-text');
           errorDiv.style.display = 'block';
           errorText.textContent = 'An error occurred during registration';
+        }
+      });
+
+      // Toggle password visibility
+      document.getElementById("togglePassword").addEventListener("click", function () {
+        const passwordField = document.getElementById("password");
+        const eyeIcon = this.querySelector("i");
+
+        if (passwordField.type === "password") {
+          passwordField.type = "text";
+          eyeIcon.classList.remove("fa-eye");
+          eyeIcon.classList.add("fa-eye-slash");
+        } else {
+          passwordField.type = "password";
+          eyeIcon.classList.remove("fa-eye-slash");
+          eyeIcon.classList.add("fa-eye");
         }
       });
     </script>
