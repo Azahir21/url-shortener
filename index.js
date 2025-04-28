@@ -6,7 +6,6 @@ const User = require("./model/user");
 const { isAuthenticated, generateToken } = require("./middleware/auth");
 const jwt = require("jsonwebtoken");
 const config = require("./config/config");
-const QRCode = require("qrcode");
 const app = express();
 
 // Load environment variables
@@ -430,25 +429,6 @@ app.get("/:shortUrl", async (req, res) => {
   } catch (error) {
     console.error("Redirection error:", error);
     res.status(500).send("Server error");
-  }
-});
-
-// QR Code generation endpoint
-app.get("/api/qrcode/:shortUrl", isAuthenticated, async (req, res) => {
-  try {
-    const shortUrl = await ShortUrl.findOne({ short: req.params.shortUrl, user: req.user._id });
-
-    if (!shortUrl) {
-      return res.status(404).json({ error: "URL not found" });
-    }
-
-    const fullUrl = `${req.protocol}://${req.get("host")}/${shortUrl.short}`;
-    const qrCode = await QRCode.toDataURL(fullUrl);
-
-    res.json({ qrCode });
-  } catch (error) {
-    console.error("Error generating QR code:", error);
-    res.status(500).json({ error: "Error generating QR code" });
   }
 });
 

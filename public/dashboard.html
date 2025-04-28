@@ -388,7 +388,8 @@
           </div>
           <div class="modal-body">
             <div class="qr-code-container">
-              <img id="qrCodeImage" class="qr-code-image" src="" alt="QR Code" />
+              <div id="qrCodeImage" style="width: 200px; height: 200px; margin: 0 auto"></div>
+              <br />
               <button class="download-qr-btn" onclick="downloadQRCode()"><i class="fas fa-download mr-2"></i>Download QR Code</button>
             </div>
           </div>
@@ -399,6 +400,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
       // Set current year in footer
@@ -713,33 +715,41 @@
       // Check auth status when page loads
       document.addEventListener("DOMContentLoaded", checkAuthStatus);
 
-      // Add QR code functionality
+      // Update QR code functionality
       function generateQRCode(shortUrl) {
-        fetch(`/api/qrcode/${shortUrl}`)
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.qrCode) {
-              const qrCodeImage = document.getElementById("qrCodeImage");
-              qrCodeImage.src = data.qrCode;
-              $("#qrCodeModal").modal("show");
-            } else {
-              alert("Error generating QR code");
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert("Error generating QR code");
-          });
+        const fullUrl = `${window.location.protocol}//${window.location.host}/${shortUrl}`;
+        const qrCodeContainer = document.getElementById("qrCodeImage");
+
+        // Clear previous QR code
+        qrCodeContainer.innerHTML = "";
+
+        // Generate new QR code
+        new QRCode(qrCodeContainer, {
+          text: fullUrl,
+          width: 200,
+          height: 200,
+          colorDark: "#2c3e50",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H,
+        });
+
+        // Show the modal
+        $("#qrCodeModal").modal("show");
       }
 
       function downloadQRCode() {
-        const qrCodeImage = document.getElementById("qrCodeImage");
-        const link = document.createElement("a");
-        link.href = qrCodeImage.src;
-        link.download = "qr-code.png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const qrCodeContainer = document.getElementById("qrCodeImage");
+        const canvas = qrCodeContainer.querySelector("canvas");
+        if (canvas) {
+          const link = document.createElement("a");
+          link.href = canvas.toDataURL("image/png");
+          link.download = "qr-code.png";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          alert("QR code not generated yet");
+        }
       }
 
       // Modify the createUrlRow function to add QR code button
