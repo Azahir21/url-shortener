@@ -434,7 +434,7 @@ app.get("/:shortUrl", async (req, res) => {
 
 // 404 handler - must be last route
 app.use((req, res) => {
-  res.status(404).render("404");
+  res.status(404).render("/404.html");
 });
 
 // For Vercel, export the Express app
