@@ -7,6 +7,7 @@ const { isAuthenticated, generateToken } = require("./middleware/auth");
 const jwt = require("jsonwebtoken");
 const config = require("./config/config");
 const app = express();
+const rateLimit = require("express-rate-limit");
 
 // Load environment variables
 require("dotenv").config();
@@ -23,6 +24,12 @@ app.use(express.json({ limit: "10mb" })); // Parse JSON bodies first
 app.use(express.urlencoded({ extended: true, limit: "10mb" })); // Parse URL-encoded bodies
 app.use(cookieParser());
 app.use(express.static("public")); // Serve static files from public directory
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // limit each IP to 100 requests per windowMs
+  })
+);
 
 // Add CORS middleware
 app.use((req, res, next) => {
@@ -434,7 +441,7 @@ app.get("/:shortUrl", async (req, res) => {
 
 // 404 handler - must be last route
 app.use((req, res) => {
-  res.status(404).render("/404.html");
+  res.status(404).sendFile(__dirname + "/public/404.html");
 });
 
 // For Vercel, export the Express app
